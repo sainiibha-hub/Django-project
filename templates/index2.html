@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TextUtils</title>
+</head>
+<body>
+    <h1>Welcome to TextUtils</h1>
+
+    <form action="/analyze" method="get">
+        {% csrf_token %}
+        <textarea name="text" style= 'margin: 0px; width: 904px; height: 153px;'></textarea><br>
+        <input type="checkbox" name="removepunc"> Remove Punctuation<br>
+        <input type="checkbox" name="fullcaps"> UPPERCASE <br>
+        <input type="checkbox" name="newlineremove"> New Line Remove <br>
+        <input type="checkbox" name="extraspaceremover"> Extra Space Remover <br>
+        <input type="checkbox" name="charcount"> Character Count <br>
+        <button type="submit">Analyze Text</button>
+    </form>
+</body>
+</html>
