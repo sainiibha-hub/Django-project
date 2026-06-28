@@ -49,9 +49,8 @@
 
 <div class="container">
 
-  <form action='/analyze' method='post '> {% csrf_token %}
-
-
+  <form action="/analyze" method="post">
+    {% csrf_token %}
 
   <div class="form-group">
     <label for="exampleFormControlTextarea1">Enter your text here and let Text Utils do the magic</label>
@@ -76,6 +75,11 @@
   <div class="custom-control custom-switch">
   <input type="checkbox"  name="extraspaceremover" class="custom-control-input" id="customSwitch4">
   <label class="custom-control-label" for="customSwitch4">Extra Spaces Remover</label>
+</div>
+
+  <div class="custom-control custom-switch">
+  <input type="checkbox"  name="charcount" class="custom-control-input" id="customSwitch5">
+  <label class="custom-control-label" for="customSwitch5">Character Count</label>
 </div>
 
 <button type="submit" class="btn btn-dark mt-2">Analyze Text</button>

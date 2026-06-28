@@ -1,122 +1,80 @@
 
-from urllib import request
-
+# Views.py
+# I have created this file - Harry
 from django.http import HttpResponse
 from django.shortcuts import render
-# def index(request):
-#    return HttpResponse("<h1>Hello Ibha</h1> " '''<a href=\"https://app.netlify.com/teams/ibha/projects\"> \
-#    "Projects on Netlify</a>" ''')
-
-# def about(request):
-# return HttpResponse("About Ibha.")
-
 
 
 def index(request):
     return render(request, 'index.html')
-#     return HttpResponse("<h1>Home</h1>" '''<a href = \"removepunc\">Remove Punctuation</a><br>''' \
-#     '''<a href = \"capitalizefirst\">Capitalize First</a><br>''' \
-#     '''<a href = \"newlineremove\">New Line Remove</a><br>''' \
-#     '''<a href = \"spaceremover\">Space Remover</a><br>''' \
-#     '''<a href = \"charcount\">Character Count</a><br>''' 
-# )
-# def removepunctuation(request):
-#     return HttpResponse("Remove Punctuation")
+
+    # return HttpResponse("Home")
+
 
 def ex1(request):
-    s = '''<h1>Navigation Bar</h1>
-    <a href = \"removepunctuation\">Remove Punctuation</a><br>
-    <a href = \"capitalizefirst\">Capitalize First</a><br>
-    <a href = \"newlineremove\">New Line Remove</a><br>
-    <a href = \"spaceremover\">Space Remover</a><br>
-    <a href = \"charcount\">Character Count</a><br>'''
-    return HttpResponse(s)
+    sites = ['''<h1>For Entertainment  </h1> <a href="https://www.youtube.com/"> Youtube Videos</a> ''',
+             '''<h1>For Interaction  </h1> <a href="https://www.facebook.com/"> Facebook</a> ''',
+             '''<h1>For Insight  </h1> <a href="https://www.ted.com/talks"> Ted Talks</a> ''',
+             '''<h1>For Internship  </h1> <a href="https://www.internshala.com">Internship</a> ''']
+    return HttpResponse((sites))
+
 
 def analyze(request):
-    # get the text
-    djtext = request.POST.get('text', 'default')
-    print(djtext)
+    def get_input(name, default='off'):
+        return request.POST.get(name, request.GET.get(name, default))
 
+    djtext = request.POST.get('text', request.GET.get('text', '')) or ''
 
-    # check checkbox values
-    removepunc = request.POST.get('removepunc', 'off')
-    print(removepunc)
-    fullcaps = request.POST.get('fullcaps', 'off')
-    print(fullcaps)
-    newlineremove = request.POST.get('newlineremove', 'off')
-    print(newlineremove)
-    extraspaceremover = request.POST.get('extraspaceremover', 'off')
-    print(extraspaceremover)
-    charcount = request.POST.get('charcount', 'off')
-    print(charcount)
+    # Check checkbox values
+    removepunc = get_input('removepunc')
+    fullcaps = get_input('fullcaps')
+    newlineremover = get_input('newlineremover')
+    extraspaceremover = get_input('extraspaceremover')
+    charcount = get_input('charcount')
 
-# check which checkbox is on
-    if removepunc == "on":
-        punctuations = '''!()-[]{};:'"\,<>./?@#$%^&*_~'''
-        analyzed = ""
+    # Check which checkbox is on
+    if removepunc == 'on':
+        punctuations = '''!()-[]{};:'"\\,<>./?@#$%^&*_~'''
+        analyzed = ''.join(char for char in djtext if char not in punctuations)
+        params = {'purpose': 'Removed Punctuations', 'analyzed_text': analyzed}
+        return render(request, 'analyze.html', params)
+
+    elif fullcaps == 'on':
+        analyzed = djtext.upper()
+        params = {'purpose': 'Changed to Uppercase', 'analyzed_text': analyzed}
+        return render(request, 'analyze.html', params)
+
+    elif extraspaceremover == 'on':
+        analyzed = ''
         for char in djtext:
-            if char not in punctuations:
-                analyzed = analyzed + char
-
-        params={'purpose': 'Removed Punctuation', 'analyzed_text': analyzed}
-        # analyzed = djtext
-       
-        return render(request, 'analyze.html', params)
-    
-
-    elif(fullcaps == "on"):
-        analyzed = ""
-        for char in djtext:
-            analyzed = analyzed + char.upper()
-        params={'purpose': 'Changed to Uppercase', 'analyzed_text': analyzed}
-        # analyzed = djtext
-        return render(request, 'analyze.html', params)
-    
-
-    elif(newlineremove == "on"):
-        analyzed = ""
-        for char in djtext:
-            if char != "\n" and char != "\r":
-                analyzed = analyzed + char
-
-        params={'purpose': 'New Line Removed', 'analyzed_text': analyzed}
-        # analyzed = djtext
-        return render(request, 'analyze.html', params)
-    
-
-    elif(extraspaceremover == "on"):
-        analyzed = ""
-        for index, char in enumerate(djtext):
-            if not(djtext[index] == " " and djtext[index + 1] == " "):
-                analyzed = analyzed + char
-
-        params={'purpose': 'Extra Space Removed', 'analyzed_text': analyzed}
-        # analyzed = djtext
-        return render(request, 'analyze.html', params)
-    
-    elif(charcount == "on"):
-        analyzed = 0
-        for char in djtext:
-            if char != " ":
-                analyzed = analyzed + 1
-
-        params={'purpose': 'Character Count', 'analyzed_text': analyzed}
-        # analyzed = djtext
+            if not (char == ' ' and analyzed.endswith(' ')):
+                analyzed += char
+        params = {'purpose': 'Removed Extra Spaces', 'analyzed_text': analyzed}
         return render(request, 'analyze.html', params)
 
-    else :
-        return HttpResponse("Error")
+    elif newlineremover == 'on':
+        analyzed = ''.join(char for char in djtext if char not in '\n\r')
+        params = {'purpose': 'Removed NewLines', 'analyzed_text': analyzed}
+        return render(request, 'analyze.html', params)
 
-    # return HttpResponse("<h1>Text Processed</h1>" )
+    elif charcount == 'on':
+        analyzed = str(len(djtext))
+        params = {'purpose': 'Character Count', 'analyzed_text': analyzed}
+        return render(request, 'analyze.html', params)
 
-# def capitalizefirst(request):
-#     return HttpResponse("Capitalize First")
+    else:
+        return HttpResponse('Error: no operation selected or text provided.')
 
+# def capfirst(request):
+#     return HttpResponse("capitalize first")
+#
 # def newlineremove(request):
-#     return HttpResponse("New Line Remove")
-
-# def spaceremover(request):
-#     return HttpResponse("Space Remover <a href = '/'>Back</a>")
-
+#     return HttpResponse("newline remove first")
+#
+#
+# def spaceremove(request):
+#     return HttpResponse("space remover back")
+#
 # def charcount(request):
-#     return HttpResponse("Character Count")  
+#     return HttpResponse("charcount ")
+
